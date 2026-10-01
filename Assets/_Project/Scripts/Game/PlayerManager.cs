@@ -2,9 +2,12 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    InputManager inputManager;
+    public InputManager inputManager;
     public CameraManager cameraManager;
     PlayerLocomotions playerLocomotions;
+
+    public bool canInteract;
+    public bool isInteracting;
 
     private void Awake()
     {
@@ -19,12 +22,22 @@ public class PlayerManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        playerLocomotions.HandleAllMovement();
+        if (!isInteracting)
+        {
+            playerLocomotions.HandleAllMovement();
+        }
+        else
+        {
+            GetComponent<Rigidbody>().linearVelocity = Vector3.zero; 
+        }
     }
 
     private void LateUpdate()
     {
-        cameraManager.HandleAllCameraMovement();
+        if (!isInteracting) 
+        {
+            cameraManager.HandleAllCameraMovement();
+        }
     }
 }
 

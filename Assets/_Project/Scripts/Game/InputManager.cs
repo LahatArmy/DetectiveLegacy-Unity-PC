@@ -2,18 +2,25 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
+    public PlayerManager playerManager;
     PlayerControls playerControls;
     AnimatorManager animatorManager;
 
+    [Header("Movement Input")]
     public Vector2 movementInput;
     public Vector2 cameraInput;
 
+    [Header("Camera Input")]
     public float cameraInputX;
     public float cameraInputY;
 
+    [Header("Movement Amount")]
     private float moveAmount;
     public float horizontalInput;
     public float verticalInput;
+
+    [Header("Button Inputs")]
+    public bool interactInput;
 
     private void Awake()
     {
@@ -27,6 +34,8 @@ public class InputManager : MonoBehaviour
             playerControls = new PlayerControls();
             playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>();
             playerControls.PlayerMovement.Camera.performed += i => cameraInput = i.ReadValue<Vector2>();
+            playerControls.PlayerAction.Interact.performed += i => interactInput = true;
+
         }
 
         playerControls.Enable();
@@ -40,6 +49,7 @@ public class InputManager : MonoBehaviour
     public void HandleAllInputs()
     {
         HandleMovementInput();
+        HandleInteractInput();
     }
 
 
@@ -53,6 +63,19 @@ public class InputManager : MonoBehaviour
 
         moveAmount = Mathf.Clamp01(Mathf.Abs(horizontalInput) + Mathf.Abs(verticalInput));
         animatorManager.UpdateAnimatorValues(0, moveAmount);
+    }
+
+    private void HandleInteractInput()
+    {
+        if (interactInput)
+        {
+            if(!playerManager.canInteract)
+            {
+                interactInput = false;
+                return;
+            }
+
+        }
     }
 
 }

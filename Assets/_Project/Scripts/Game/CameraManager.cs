@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    InputManager inputManager;
+    public InputManager inputManager;
 
     public Transform targetTransform;
     public Transform cameraPivot;
     public Transform cameraTransform;
     public LayerMask collisionLayers;
     private float defaultPosition;
+    private float targetCameraPosition;
     private Vector3 cameraFollowVelocity = Vector3.zero;
     private Vector3 cameraVectorPosition;
 
@@ -26,10 +27,13 @@ public class CameraManager : MonoBehaviour
 
     private void Awake()
     {
-        inputManager = FindObjectOfType<InputManager>();
-        targetTransform = FindObjectOfType<PlayerManager>().transform;
-        cameraTransform = Camera.main.transform;
         defaultPosition = cameraTransform.localPosition.z;
+        inputManager = FindFirstObjectByType<InputManager>();
+        targetTransform = FindFirstObjectByType<PlayerManager>().transform;
+        cameraTransform = Camera.main.transform;
+        
+
+        
     }
 
     public void HandleAllCameraMovement()
@@ -65,25 +69,25 @@ public class CameraManager : MonoBehaviour
         cameraPivot.localRotation = targetRotation;
     }
 
-    private void HandleCameraCollisions()
+      private void HandleCameraCollisions()
     {
-        float targetPosition = defaultPosition;
+        targetCameraPosition = defaultPosition;
         RaycastHit hit;
         Vector3 direction = cameraTransform.position - cameraPivot.position;
         direction.Normalize();
 
-        if(Physics.SphereCast(cameraPivot.transform.position, cameraCollisionRadius, direction, out hit, Mathf.Abs(targetPosition), collisionLayers))
+        if(Physics.SphereCast(cameraPivot.transform.position, cameraCollisionRadius, direction, out hit, Mathf.Abs(targetCameraPosition), collisionLayers))
         {
             float distance = Vector3.Distance(cameraPivot.position, hit.point);
-            targetPosition =- (distance - cameraCollisionOffset);
+            targetCameraPosition =- (distance - cameraCollisionRadius);
         }
 
-        if(Mathf.Abs(targetPosition) < minimumCollisionOffset)
+        if(Mathf.Abs(targetCameraPosition) < cameraCollisionRadius)
         {
-            targetPosition =- minimumCollisionOffset;
+            targetCameraPosition =- cameraCollisionRadius;
         }
 
-        cameraVectorPosition.z = Mathf.Lerp(cameraTransform.localPosition.z, targetPosition, 0.2f);
+        cameraVectorPosition.z = Mathf.Lerp(cameraTransform.localPosition.z, targetCameraPosition, 0.2f);
         cameraTransform.localPosition = cameraVectorPosition;
     }
 }
