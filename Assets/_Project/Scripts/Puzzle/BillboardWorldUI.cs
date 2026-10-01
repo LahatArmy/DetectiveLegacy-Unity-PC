@@ -12,8 +12,10 @@ public class BillboardWorldUI : MonoBehaviour
     private void LateUpdate()
     {
         if (mainCamera != null)
-        {
-            transform.LookAt(mainCamera.transform.position + mainCamera.transform.forward);
-        }
+    {
+        transform.rotation = Quaternion.LookRotation(
+            transform.position - mainCamera.transform.position
+        );
+    }
     }
 }

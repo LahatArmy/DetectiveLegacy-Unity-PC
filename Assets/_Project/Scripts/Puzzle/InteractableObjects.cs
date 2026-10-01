@@ -4,11 +4,24 @@ public class InteractableObjects : MonoBehaviour
 {
     protected PlayerManager playerManager;
     [SerializeField] private GameObject interactableUIGameObject;
+    [SerializeField] private Outline outline;
     protected Collider interactableCollider;
+
+    protected virtual void Awake()
+    {
+        if(outline != null)
+        {
+            outline.enabled = false;
+        }
+    }
 
 
     protected virtual void OnTriggerEnter(Collider other)
     {
+        if(outline != null)
+        {
+            outline.enabled = true;
+        }
         if(playerManager == null)
         {
             playerManager = other.GetComponent<PlayerManager>();
@@ -36,6 +49,10 @@ public class InteractableObjects : MonoBehaviour
 
     protected virtual void OnTriggerExit(Collider other)
     {
+        if(outline != null)
+        {
+            outline.enabled = false;
+        }
         if(playerManager == null)
         {
             playerManager = other.GetComponent<PlayerManager>();
