@@ -19,7 +19,7 @@ public class PlayerInteractionManager : InteractableObjects
         }
     }
 
-    public void ClosePuzzleUI()
+    public void CloseUI()
     {
         if (objectInteractCanvas != null)
         {

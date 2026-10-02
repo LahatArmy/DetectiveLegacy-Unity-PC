@@ -8,6 +8,7 @@ public class CardController : MonoBehaviour
     [SerializeField] Card cardPrefab;
     [SerializeField] Transform gridTransform;
     [SerializeField] Sprite[] sprites;
+    [SerializeField] private GameObject clueObject;
 
     private List<Sprite> spritePairs;
 
@@ -18,6 +19,8 @@ public class CardController : MonoBehaviour
 
     private void Start()
     {
+        clueObject.transform.localScale = Vector3.zero;
+
         PrepareSprites();
         CreateCards();
     }
@@ -75,10 +78,39 @@ public class CardController : MonoBehaviour
         {
             Debug.Log("Cards Match!");
             matchCounts++;
-            if(matchCounts>= spritePairs.Count / 2)
+            if (matchCounts >= spritePairs.Count / 2)
             {
                 Debug.Log("All Cards Matched!");
-                PrimeTween.Sequence.Create().Chain(PrimeTween.Tween.Scale(gridTransform, Vector3.one*1.2f, 0.2f, ease: PrimeTween.Ease.OutBack)).Chain(PrimeTween.Tween.Scale(gridTransform, Vector3.one, 0.1f));
+
+                PrimeTween.Sequence.Create()
+                    .Chain(
+                        PrimeTween.Tween.Scale(
+                        gridTransform,
+                        Vector3.one * 1.2f,
+                        0.2f,
+                        ease: PrimeTween.Ease.OutBack
+                        )
+                    )
+                    .Chain(
+                        PrimeTween.Tween.Scale(
+                        gridTransform,
+                        Vector3.one,
+                        0.1f
+                        )
+                    )
+                    .ChainCallback(() =>
+                        {
+                            gridTransform.gameObject.SetActive(false);
+                            clueObject.SetActive(true);
+                        })
+                    .Chain(
+                        PrimeTween.Tween.Scale(
+                        clueObject.transform,
+                        Vector3.one,
+                        0.4f,
+                        ease: PrimeTween.Ease.OutBack
+                        )
+                );
             }
         }
         else
